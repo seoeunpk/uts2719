@@ -2,17 +2,19 @@ import { Suspense, lazy, useCallback, useMemo, useState } from 'react'
 import { BottomSheet } from './components/BottomSheet'
 import { CanteenDetail } from './components/CanteenDetail'
 import { FilterSheet } from './components/FilterSheet'
+import { MenuDataState } from './components/MenuDataState'
 import type { MapPadding } from './components/map/MapView'
 import { QuickFilters } from './components/QuickFilters'
 import { ResultsList } from './components/ResultsList'
 import { SearchBar } from './components/SearchBar'
-import { IS_MOCK_DATA, canteens, filterOptions, menuItems } from './data'
+import { MENU_CONFIG, PREVIEW_CATALOGUE } from './data'
+import { useMenuCatalogue } from './hooks/useMenuCatalogue'
 import { useMenuFilters } from './hooks/useMenuFilters'
 import { useMediaQuery, useViewportHeight } from './hooks/useViewport'
 import { filterMenuItems } from './lib/filterMenu'
 import { getSheetHeights, type SheetSnap } from './lib/sheet'
 import { summariseByCanteen } from './lib/summarise'
-import type { MenuItem } from './types/menu'
+import type { MenuFilters, MenuItem } from './types/menu'
 
 // The map engine is large; load it separately so the panel appears first.
 const MapView = lazy(() => import('./components/map/MapView').then((m) => ({ default: m.MapView })))
@@ -24,7 +26,8 @@ const MOBILE_TOP_OVERLAY = 116
 const DESKTOP_TOP_OVERLAY = 64
 
 function App() {
-  const { filters, updateFilters, resetFilters, activeFilterCount } = useMenuFilters()
+  const { filters, updateFilters, resetFilters, clearAllFilters, activeFilterCount } = useMenuFilters()
+  const { canteens, menuItems, filterOptions, loading, error, retry, isPreview } = useMenuCatalogue(MENU_CONFIG, PREVIEW_CATALOGUE)
   const isDesktop = useMediaQuery('(min-width: 1024px)')
   const viewportHeight = useViewportHeight()
 
@@ -36,8 +39,8 @@ function App() {
   const [sheetSnap, setSheetSnap] = useState<SheetSnap>('half')
   const closeFilters = useCallback(() => setFiltersOpen(false), [])
 
-  const results = useMemo(() => filterMenuItems(menuItems, filters, filterOptions), [filters])
-  const summaries = useMemo(() => summariseByCanteen(canteens, results), [results])
+  const results = useMemo(() => filterMenuItems(menuItems, filters, filterOptions), [menuItems, filters, filterOptions])
+  const summaries = useMemo(() => summariseByCanteen(canteens, results), [canteens, results])
   const selectedSummary = summaries.find((s) => s.canteen.id === selectedCanteenId)
 
   const panelOffset = isDesktop && !panelCollapsed ? PANEL_WIDTH : 0
@@ -67,7 +70,14 @@ function App() {
     setHighlightedItemId(null)
   }
 
-  const panelContent = selectedSummary ? (
+  function changeFilters(patch: Partial<MenuFilters>) {
+    updateFilters(patch)
+    backToResults()
+  }
+
+  const panelBody = loading || error || menuItems.length === 0 ? (
+    <MenuDataState loading={loading} error={error} onRetry={retry} />
+  ) : selectedSummary ? (
     <CanteenDetail summary={selectedSummary} onBack={backToResults} highlightedItemId={highlightedItemId} />
   ) : (
     <ResultsList
@@ -75,15 +85,19 @@ function App() {
       onSelectCanteen={selectCanteen}
       onSelectItem={selectItem}
       onHoverCanteen={isDesktop ? setHoveredCanteenId : undefined}
-      onReset={resetFilters}
-      isPreviewData={IS_MOCK_DATA}
+      onReset={clearAllFilters}
     />
   )
+
+  const panelContent = <>
+    {isPreview && <p className="px-4 pt-3 text-xs text-slate-500">Sample menu for testing</p>}
+    {panelBody}
+  </>
 
   const searchBar = (
     <SearchBar
       value={filters.query}
-      onChange={(query) => updateFilters({ query })}
+      onChange={(query) => changeFilters({ query })}
       onSubmit={() => {
         backToResults()
         if (!isDesktop) setSheetSnap('half')
@@ -91,11 +105,11 @@ function App() {
     />
   )
 
-  const quickFilters = (
+  const quickFilters = !loading && !error && menuItems.length > 0 && (
     <QuickFilters
       filters={filters}
       options={filterOptions}
-      onChange={updateFilters}
+      onChange={changeFilters}
       onOpenAllFilters={() => setFiltersOpen(true)}
       activeFilterCount={activeFilterCount}
     />
@@ -166,7 +180,7 @@ function App() {
         resultCount={results.length}
         filters={filters}
         options={filterOptions}
-        onChange={updateFilters}
+        onChange={changeFilters}
         onReset={resetFilters}
       />
     </div>

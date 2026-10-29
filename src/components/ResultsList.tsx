@@ -13,7 +13,6 @@ export interface ResultsListProps {
   /** Hovering a canteen's group emphasises its map pin. */
   onHoverCanteen?: (canteenId: string | null) => void
   onReset: () => void
-  isPreviewData?: boolean
 }
 
 /** Default panel view: matching dishes grouped by canteen. */
@@ -23,7 +22,6 @@ export function ResultsList({
   onSelectItem,
   onHoverCanteen,
   onReset,
-  isPreviewData = false,
 }: ResultsListProps) {
   const withResults = summaries.filter((s) => s.items.length > 0)
   const total = withResults.reduce((sum, s) => sum + s.items.length, 0)
@@ -31,17 +29,7 @@ export function ResultsList({
   return (
     <div className="px-4 pb-6">
       <div className="pb-3 pt-1">
-        <div className="flex items-center gap-2">
-          <h1 className="text-xl font-extrabold tracking-tight text-slate-900">What should we eat today?</h1>
-          {isPreviewData && (
-            <span
-              title="Showing mock data for UI preview, not real menus"
-              className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-800"
-            >
-              Preview data
-            </span>
-          )}
-        </div>
+        <h1 className="text-xl font-extrabold tracking-tight text-slate-900">What should we eat today?</h1>
         <p className="mt-0.5 text-sm text-slate-500" aria-live="polite">
           {total} {total === 1 ? 'dish' : 'dishes'} at {withResults.length}{' '}
           {withResults.length === 1 ? 'canteen' : 'canteens'}
@@ -74,7 +62,7 @@ export function ResultsList({
                   <span className="block font-bold text-slate-900">{canteen.name}</span>
                   <span className="block truncate text-sm text-slate-500">
                     {canteen.location}
-                    {minPrice !== null && ` · from ${formatPrice(minPrice)}`}
+                    {minPrice !== null && `, from ${formatPrice(minPrice)}`}
                   </span>
                 </span>
                 <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5 text-slate-400" fill="none" stroke="currentColor" strokeWidth={2}>

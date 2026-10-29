@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import { EMPTY_FILTERS } from '../lib/constants'
+import { EMPTY_FILTERS } from '../lib/constants.ts'
 import type { MenuFilters } from '../types/menu'
 
 /** Holds the UI's filter selections. Contains no filtering logic. */
@@ -15,13 +15,15 @@ export function useMenuFilters(initial: MenuFilters = EMPTY_FILTERS) {
     setFilters((prev) => ({ ...EMPTY_FILTERS, query: prev.query }))
   }, [])
 
+  const clearAllFilters = useCallback(() => setFilters({ ...EMPTY_FILTERS }), [])
+
   const activeFilterCount =
     (filters.canteenId ? 1 : 0) +
     filters.cuisines.length +
     filters.dietary.length +
-    (filters.priceRangeId ? 1 : 0)
+    (filters.priceRange ? 1 : 0)
 
-  return { filters, setFilters, updateFilters, resetFilters, activeFilterCount }
+  return { filters, setFilters, updateFilters, resetFilters, clearAllFilters, activeFilterCount }
 }
 
 /** Adds `value` to the list if absent, removes it if present. */

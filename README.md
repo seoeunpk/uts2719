@@ -18,12 +18,13 @@ Deploy to Vercel or Netlify as a Vite project: the build command is `npm run bui
 ```
 src/
   types/menu.ts          Shared data contracts (MenuItem, Canteen, MenuFilters, ...)
-  data/index.ts          Single data entry point: the only file that should import data
+  data/index.ts          Dataset configuration and labelled sample records
+  data/catalogue.ts      CSV-to-interface mapping and canteen validation
   data/mock/mockMenu.ts  MOCK data for UI preview only (not real menus)
-  lib/filterMenu.ts      UI adapter for search + combined filters
-  lib/constants.ts       Dietary labels, price ranges, empty filter state, map bounds
+  lib/filterMenu.ts      Search, canteen/cuisine/dietary filters and price slider
+  lib/constants.ts       Dietary labels, empty filter state and map bounds
   lib/summarise.ts       Groups filtered results by canteen for pins and the list
-  hooks/                 Filter UI state, media query / viewport helpers
+  hooks/                 Dataset loading/retry, filter UI state, viewport helpers
   data/nusCampus.ts      NUS campus outlines (from OpenStreetMap) for the NUS-only map
   components/map/        Leaflet map, canteen pins, minimal campus basemap
   components/            Panel views (ResultsList, CanteenDetail), FoodCard, SearchBar,
@@ -33,10 +34,10 @@ src/
 
 ## Integration guide (Person 2)
 
-Search and filtering are connected to the existing UI. Real menu data is still pending:
+The latest interface is connected through `useMenuCatalogue`: one dataset drives the filter choices, slider limits, cards, results and map pins. Loading, failed loading/retry, missing menu data and no matching results have separate states.
 
-1. **Real data: `src/data/index.ts`.** Replace the mock imports with the real dataset, mapped to `Canteen[]` and `MenuItem[]` from `src/types/menu.ts`. Then set `IS_MOCK_DATA = false`, which removes the "Preview data" badge. `filterOptions.cuisines` is built from the items automatically.
-2. **Search and filtering: `src/lib/filterMenu.ts`.** The adapter now calls the shared logic in `src/lib/menu.js`, translating the UI's canteen IDs, price presets and dietary selections. The map pins, result count, list and empty state all use its results. It preserves the existing item order and object references.
+1. **Dataset: `src/data/index.ts`.** Preview mode is the default until the real CSVs arrive. CSV mode loads public menu files and verified canteen metadata, then maps their fields to the shared UI types. CSV errors never silently fall back to sample records.
+2. **Search and filtering: `src/lib/filterMenu.ts`.** The existing controls call the shared filtering logic, including the continuous price slider and all selected dietary tags. Changing a filter returns to the matching-results list, and clearing an empty search resets both the query and filters.
 
 How `MenuFilters` is defined (an empty value means no restriction):
 
@@ -45,37 +46,46 @@ How `MenuFilters` is defined (an empty value means no restriction):
 | `query`        | Search bar (every keystroke)   | Raw search text                          |
 | `canteenId`    | Filter dropdown                | One `Canteen.id`, or `null` for all      |
 | `cuisines`     | Quick chips + filter sheet     | Match **any** selected cuisine           |
-| `priceRangeId` | Quick chips + filter sheet     | Look up in `options.priceRanges`; bounds are inclusive, `max: null` means no cap |
-| `dietary`      | Quick chips + filter sheet     | Suggested: item must have **all** selected tags |
+| `priceRange`   | Price slider                   | `{ min, max }` in SGD, inclusive; `null` means any price |
+| `dietary`      | Quick chips + filter sheet     | Item must have **all** selected tags |
 
 Other notes:
 
 - Every `Canteen` needs `coordinates: { lat, lng }` for its map pin. The mock coordinates are approximate, so use the real ones from the dataset or check them on a map.
 - Pins and the list are built from whatever `filterMenuItems` returns. A canteen with no matching dishes stays on the map as a small grey pin.
 - Clicking a pin opens that canteen in the panel. This is UI state and separate from the `canteenId` filter.
-- The basemap is OpenFreeMap's free, keyless "Positron" vector style, with place names, road shields and boundaries removed (`HIDDEN_LAYER` in `CampusBasemap.tsx`). Everything outside the NUS outline is faded out, and panning and zooming are limited to campus (`NUS_MAX_BOUNDS`, `minZoom` in `MapView.tsx`).
+- The basemap is OpenFreeMap's free, keyless full-colour "Liberty" vector style, with shop/place icons, place names, road shields, one-way arrows and 3D buildings removed (`HIDDEN_LAYER` in `CampusBasemap.tsx`). Everything outside the NUS outline is covered in grey, and panning and zooming are limited to campus (`NUS_MAX_BOUNDS`, `minZoom` in `MapView.tsx`).
 - The map code (MapLibre) is about 335 KB gzipped, so it's lazy-loaded and the panel appears first. Vite's "chunk larger than 500 kB" warning is expected.
-- `MenuItem.imageUrl` is optional. When it's missing or the image fails to load, the card shows a placeholder for the cuisine.
+- `MenuItem.imageUrl` is optional. When it's missing or the image fails to load, the card shows a plain placeholder.
 - `DietaryTag` is a union in `types/menu.ts`. If the dataset has more tags, add them there and in `DIETARY_LABELS`, and the compiler will flag anything else that needs updating.
-- Price buckets are defined in `PRICE_RANGES` in `lib/constants.ts`.
+- The price slider spans `filterOptions.priceBounds`, which is the cheapest to dearest dish rounded to whole dollars, in $0.50 steps.
+- Blank CSV prices stay unknown: cards show "Price unavailable", active price filters exclude them, and map summaries do not turn them into $0.00. Unknown cuisine and dietary attributes are not inferred.
 - `FoodCard` accepts an optional `onSelect` callback if a dish detail view is added later.
 
-## Data utilities and checks
+## Enable real CSV data
 
-Use Node.js 24 LTS; `.nvmrc` pins the checked version, 24.16.0.
+Copy `.env.example` to `.env.local`, set `VITE_MENU_SOURCE=csv`, and add the real menu files plus verified location metadata under `public/data/`. Restart Vite after changing environment settings.
 
-```sh
-npm test                  # CSV, core filtering, UI adapter and React lifecycle tests
-npm run lint              # shared frontend and data code
-npm run build             # type-check and build the actual app
-npm run test:build        # standalone React/data compatibility fixture
-npm run validate:menu     # validate the production CSV; fails while it is empty
+```dotenv
+VITE_MENU_SOURCE=csv
+VITE_MENU_CSV_FILES=["data/menu.csv"]
+VITE_CANTEENS_URL=data/canteens.json
 ```
 
-Pull requests and updates to `main` run tests, lint and the app build in GitHub Actions.
+`VITE_MENU_CSV_FILES` accepts a JSON array of one or multiple public CSV URLs. Relative data/image URLs respect Vite's deployment base path. `canteens.json` is an array of canteens with a unique `id`, `name`, and numeric `coordinates.lat` / `coordinates.lng`; `location` and `openingHours` are optional text. Each menu CSV's `canteen` must match an exact canteen ID or an unambiguous name. See [the data handoff](docs/person-2-handoff.md) for the menu column format.
 
-`src/lib/menu.js` provides CSV loading/validation, combined filters, sorting and filter options. `src/hooks/useMenu.js` provides a standalone CSV-loading hook. Both include TypeScript declarations. The existing map UI continues to use the clearly labelled mock data through `src/data/index.ts` until the actual CSVs are supplied and mapped to the shared UI types.
+The production menu CSV contains headings only and the production canteen list is empty. Do not copy fictional test fixtures into production as real menu information. Sample mode stays explicitly labelled, while CSV mode with no records shows that menus are not available yet.
 
-`public/data/menu.csv` contains headings only. The fixture records in `tests/fixtures/` are fictional and must not be published as real menu data. Menu release validation is separate from CI because real records and source verification are still pending.
+## Verify changes
 
-See [the data handoff guide](docs/person-2-handoff.md) for the proposed CSV format. Menu photos, dietary evidence, coordinates, actual desktop/mobile acceptance and deployment still require checking before launch.
+Use Node.js 24 LTS (`.nvmrc` pins 24.16.0).
+
+```sh
+npm test
+npm run lint
+npm run build
+npm run test:build
+npm run validate:menu
+```
+
+CI checks tests, lint, type checking and builds. Release menu validation deliberately fails while the production CSV is empty. Actual menu content, dietary evidence and coordinates must be verified before publishing the app or using it for the user study.

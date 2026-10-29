@@ -17,10 +17,11 @@ export function summariseByCanteen(canteens: Canteen[], items: MenuItem[]): Cant
   }
   return canteens.map((canteen) => {
     const list = byCanteen.get(canteen.id) ?? []
+    const prices = list.flatMap((item) => item.price === null ? [] : [item.price])
     return {
       canteen,
       items: list,
-      minPrice: list.length ? Math.min(...list.map((i) => i.price)) : null,
+      minPrice: prices.length ? prices.reduce((a, b) => Math.min(a, b)) : null,
     }
   })
 }

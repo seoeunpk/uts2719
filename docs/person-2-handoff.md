@@ -2,7 +2,7 @@
 
 Target: a working app by **Sunday, 1 November 2026**. The user confirmed that Person 1 uses React + Vite and will provide the menu data later as CSV files.
 
-The map interface and data utilities are now combined. `src/lib/filterMenu.ts` adapts the UI's existing controls to the shared search/filter logic, including its price presets, canteen IDs and four dietary tags. Result counts, menu lists and map summaries use the filtered records. The app still shows labelled preview data until the real CSVs are supplied.
+The map interface and data utilities are now combined. `src/lib/filterMenu.ts` adapts the UI's existing controls to the shared search/filter logic, including its price slider, canteen IDs and four dietary tags. Result counts, menu lists and map summaries use the filtered records. The app still shows labelled preview data until the real CSVs are supplied.
 
 ## Included
 
@@ -38,63 +38,30 @@ Dietary tags are explicit verified attributes. Blank means no verified tag is re
 
 Use consistent canteen, stall and cuisine spellings. IDs are case-sensitive. If stalls share a name across canteens, combine canteen and stall filters. Files in `public/` will be public when deployed.
 
-## CSV-loading hook for the real-data import
+## Connected interface
 
-The current app uses the existing data entry point and UI filter adapter. The standalone CSV-loading hook below is available when replacing preview data. Declaration files support TypeScript consumers. Map parsed CSV records to `src/types/menu.ts` and verified canteen coordinates before switching the app's data source; the CSV and UI contracts use different field names.
+`src/data/index.ts` defines the source configuration and labelled sample catalogue. `useMenuCatalogue` loads the configured data once and exposes loading/error/retry state. The same returned catalogue supplies App's filter options, cards, canteen menus, result counts and map summaries.
 
-In an existing component, connect its control values to the hook:
+The latest `feature/frontend` interface is included: its map styling, continuous price slider, compact menu rows and responsive layout are preserved. The slider now filters with inclusive numeric minimum/maximum bounds. Changing controls returns from a canteen detail to the matching-results list. The all-filters Reset button preserves the search text; the no-results recovery button clears both the search and filters.
 
-```jsx
-import { useMenu } from "./hooks/useMenu.js";
-import { formatPrice, getMenuFacets, searchMenu } from "./lib/menu.js";
+Unknown CSV prices remain null, display as "Price unavailable", are excluded by active price bounds, and are omitted from map minimum-price calculations. Unknown cuisines stay unlabelled. Images resolve against the deployment base path and retain a placeholder when missing or broken.
 
-// Values below come from the existing search/filter controls.
-const menu = useMenu(`${import.meta.env.BASE_URL}data/menu.csv`, {
-  query,
-  canteens: selectedCanteens,
-  stalls: selectedStalls,
-  cuisines: selectedCuisines,
-  dietaryTags: selectedDietaryTags,
-  maxPrice: maxPriceText === "" ? undefined : Number(maxPriceText),
-  sort: "price-asc",
-});
+## Configure the real-data source
 
-// Populate stall choices for the selected canteen(s).
-const stallOptions = getMenuFacets(
-  searchMenu(menu.items, { canteens: selectedCanteens }),
-).stalls;
+1. Add the verified menu CSVs under `public/data/`.
+2. Fill `public/data/canteens.json` with an array of verified location records. Required fields: unique `id`, non-empty `name`, numeric `coordinates.lat` (-90 to 90) and `coordinates.lng` (-180 to 180). Optional fields: `location` and `openingHours`. Do not treat the sample locations as verified real metadata.
+3. Each menu's `canteen` must match a metadata ID exactly, or a unique name (ignoring case/outer whitespace). Unknown and ambiguous locations are rejected rather than placed at guessed coordinates.
+4. Copy `.env.example` to `.env.local` and set `VITE_MENU_SOURCE=csv`. `VITE_MENU_CSV_FILES` is a JSON array of public URLs; its default is `["data/menu.csv"]`. `VITE_CANTEENS_URL` defaults to `data/canteens.json`.
+5. Restart Vite or rebuild. Relative data/image paths resolve below Vite's BASE_URL, including a repository subpath. All files in `public/` become public when deployed.
 
-if (menu.loading) return <p>Loading menus…</p>;
-if (menu.error) return <p role="alert">{menu.error.message}</p>;
-if (menu.filterError) return <p role="alert">{menu.filterError.message}</p>;
-if (!menu.totalCount) return <p>Menu data has not been added yet.</p>;
-if (!menu.matchCount) return <p>No dishes match. Try changing the filters.</p>;
-
-return <ul>{menu.results.map((item) => (
-  <li key={item.id}>{item.name} — {formatPrice(item.price)}</li>
-))}</ul>;
-```
-
-This snippet belongs inside Person 1's component and illustrates the data connection. Person 1 supplies the control state, selectors and card components. Clear selected stalls when changing canteens. Render CSV text using React text expressions, as shown. For pictures in `public/`, prepend `import.meta.env.BASE_URL` to relative image paths. Image text is preserved; the importer does not check whether the image exists.
-
-For multiple CSVs, pass an array of URLs. Equivalent URL arrays do not reload the data. Each source loads once per source change; changing filters uses the in-memory data. Any source or validation failure rejects the complete load so an incomplete catalogue is not silently displayed.
-
-## Filter behaviour
-
-Empty selections mean all values. Selected canteens/stalls/cuisines use OR within a field; different fields combine with AND. All selected dietary tags must match. Every search word must appear somewhere in the searchable text.
-
-`minPrice` and `maxPrice` are inclusive numeric bounds. Unset or `null` bounds are inactive; zero is active. Convert number-input strings before passing them. Invalid bounds become `filterError` in the hook so the UI can display a correction message.
-
-Sort values: `name-asc` (default), `name-desc`, `price-asc`, `price-desc`. Unknown prices sort last in both price directions. Sorting returns a new array and preserves the original input order. `getMenuFacets(items)` returns the available canteens, stalls, cuisines, dietary tags and known price range. The hook's facets cover all loaded items; use the scoped example for cascading stalls.
+CSV and metadata files load as one catalogue. A failure in either produces a retry state; it never substitutes sample records. Empty files show that menu data is not available yet. Preview is the explicit default until real data arrives, with a visible sample-menu notice.
 
 ## Before release
 
-1. Receive the real CSVs, map their columns and review ambiguous/missing values against the menu sources.
-2. Validate all intended files together. Compare source/output counts, duplicate IDs and dietary evidence.
-3. Replace the preview data through `src/data/index.ts`, mapping CSV fields to the UI contract, checking canteen IDs/coordinates and handling unknown prices before removing the preview badge.
-4. Test the actual interface on mobile and desktop: reset filters, changing canteens, repeated stall names, unknown prices, no results, failed loading and images.
-5. Use Person 1's Vite production build, configure the agreed hosting account/base path, deploy and verify the public URL. The base-aware CSV URL supports a repository subpath.
+- Map the actual CSV columns and check ambiguous/missing values against the original menu sources.
+- Validate all intended CSVs together, compare source/output counts and confirm dietary evidence.
+- Verify canteen names, IDs, coordinates, opening hours, images and directions.
+- Check the completed interface on mobile and desktop with the actual dataset.
+- Configure the agreed hosting account/base path, deploy and verify the public URL.
 
-Automated checks use fictional records. They do not verify real NUS menus, dietary claims, Person 1's final UI, mobile usability or a deployed website. The header-only production CSV intentionally fails release validation until real records are added.
-
-Implementation references: [Papa Parse documentation](https://www.papaparse.com/docs) and [React effect cleanup](https://react.dev/reference/react/useEffect).
+Automated tests and local browser checks use fictional fixture records. They verify the connection and controls, not actual NUS menus, dietary claims, geographic accuracy or release readiness. The production menu and metadata files are intentionally empty until real data is supplied.
