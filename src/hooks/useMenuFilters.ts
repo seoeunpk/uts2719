@@ -7,7 +7,12 @@ export function useMenuFilters(initial: MenuFilters = EMPTY_FILTERS) {
   const [filters, setFilters] = useState<MenuFilters>(initial)
 
   const updateFilters = useCallback((patch: Partial<MenuFilters>) => {
-    setFilters((prev) => ({ ...prev, ...patch }))
+    setFilters((prev) => ({
+      ...prev,
+      ...patch,
+      ...('canteenId' in patch && patch.canteenId !== prev.canteenId && !('stallId' in patch)
+        ? { stallId: null } : {}),
+    }))
   }, [])
 
   // Keep the search text when resetting the filter panel.
@@ -19,6 +24,7 @@ export function useMenuFilters(initial: MenuFilters = EMPTY_FILTERS) {
 
   const activeFilterCount =
     (filters.canteenId ? 1 : 0) +
+    (filters.stallId ? 1 : 0) +
     filters.cuisines.length +
     filters.dietary.length +
     (filters.priceRange ? 1 : 0)

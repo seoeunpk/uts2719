@@ -44,6 +44,8 @@ Use consistent canteen, stall and cuisine spellings. IDs are case-sensitive. If 
 
 The latest `feature/frontend` interface is included: its map styling, continuous price slider, compact menu rows and responsive layout are preserved. The slider now filters with inclusive numeric minimum/maximum bounds. Changing controls returns from a canteen detail to the matching-results list. The all-filters Reset button preserves the search text; the no-results recovery button clears both the search and filters.
 
+The Stall dropdown is derived from loaded records and follows the Canteen dropdown. Equal stall names in different canteens have distinct keys and display their canteen when viewing all stalls. Changing canteens clears the previous stall selection. Both reset actions clear the stall, and stall filtering combines with search, cuisine, price and dietary filters. The active-filter badge counts the stall selection.
+
 Unknown CSV prices remain null, display as "Price unavailable", are excluded by active price bounds, and are omitted from map minimum-price calculations. Unknown cuisines stay unlabelled. Images resolve against the deployment base path and retain a placeholder when missing or broken.
 
 ## Configure the real-data source
@@ -62,6 +64,7 @@ CSV and metadata files load as one catalogue. A failure in either produces a ret
 - Validate all intended CSVs together, compare source/output counts and confirm dietary evidence.
 - Verify canteen names, IDs, coordinates, opening hours, images and directions.
 - Check the completed interface on mobile and desktop with the actual dataset.
+- Complete physical iOS/Android checks with the deployed URL. Browser viewport testing is recorded in `docs/device-qa.md`.
 - Configure the agreed hosting account/base path, deploy and verify the public URL.
 
 Automated tests and local browser checks use fictional fixture records. They verify the connection and controls, not actual NUS menus, dietary claims, geographic accuracy or release readiness. The production menu and metadata files are intentionally empty until real data is supplied.

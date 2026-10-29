@@ -1,4 +1,5 @@
 import { loadMenuCsv, MenuDataError } from '../lib/menu.js'
+import { getStallOptions } from '../lib/stalls.ts'
 import type { MenuItem as CsvMenuItem } from '../lib/menu.js'
 import type { Canteen, FilterOptions, MenuItem } from '../types/menu'
 
@@ -63,6 +64,7 @@ export function buildFilterOptions(canteens: Canteen[], items: MenuItem[]): Filt
   const prices = items.flatMap((item) => item.price === null ? [] : [item.price])
   return {
     canteens,
+    stalls: getStallOptions(items),
     cuisines: [...new Set(items.flatMap((item) => item.cuisine ? [item.cuisine] : []))].sort(),
     dietary: [...new Set(items.flatMap((item) => item.dietary))].sort(),
     priceBounds: {

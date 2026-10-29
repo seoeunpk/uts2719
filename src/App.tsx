@@ -135,8 +135,8 @@ function App() {
             style={{ width: PANEL_WIDTH, transform: `translateX(${panelCollapsed ? -PANEL_WIDTH : 0}px)` }}
             className="absolute inset-y-0 left-0 z-20 flex flex-col bg-white shadow-xl transition-transform duration-300"
           >
-            <div className="shrink-0 p-4 pb-3">{searchBar}</div>
-            <div key={selectedCanteenId ?? 'list'} className="min-h-0 flex-1 overflow-y-auto">
+            <div inert={panelCollapsed} aria-hidden={panelCollapsed} className="shrink-0 p-4 pb-3">{searchBar}</div>
+            <div inert={panelCollapsed} aria-hidden={panelCollapsed} key={selectedCanteenId ?? 'list'} className="min-h-0 flex-1 overflow-y-auto">
               {panelContent}
             </div>
             <button

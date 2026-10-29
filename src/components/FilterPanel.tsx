@@ -15,6 +15,8 @@ export interface FilterPanelProps {
 }
 
 export function FilterPanel({ filters, options, onChange, onReset, hideHeader = false }: FilterPanelProps) {
+  const stalls = options.stalls.filter((stall) => !filters.canteenId || stall.canteenId === filters.canteenId)
+  const canteenNames = new Map(options.canteens.map((canteen) => [canteen.id, canteen.name]))
   return (
     <div className="flex flex-col gap-6">
       {!hideHeader && (
@@ -39,6 +41,21 @@ export function FilterPanel({ filters, options, onChange, onReset, hideHeader = 
               {canteen.name}
             </option>
           ))}
+        </select>
+      </FilterSection>
+
+      <FilterSection title="Stall">
+        <select
+          value={filters.stallId ?? ''}
+          onChange={(e) => onChange({ stallId: e.target.value || null })}
+          aria-label="Stall"
+          disabled={stalls.length === 0}
+          className="h-11 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none focus:border-nus-blue focus:ring-4 focus:ring-nus-blue/15 disabled:text-slate-400"
+        >
+          <option value="">All stalls</option>
+          {stalls.map((stall) => <option key={stall.id} value={stall.id}>
+            {stall.name}{!filters.canteenId && `, ${canteenNames.get(stall.canteenId) ?? stall.canteenId}`}
+          </option>)}
         </select>
       </FilterSection>
 

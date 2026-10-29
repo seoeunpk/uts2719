@@ -45,11 +45,14 @@ How `MenuFilters` is defined (an empty value means no restriction):
 | -------------- | ------------------------------ | ---------------------------------------- |
 | `query`        | Search bar (every keystroke)   | Raw search text                          |
 | `canteenId`    | Filter dropdown                | One `Canteen.id`, or `null` for all      |
+| `stallId`      | Stall dropdown                 | One distinct stall within its canteen, or `null` for all |
 | `cuisines`     | Quick chips + filter sheet     | Match **any** selected cuisine           |
 | `priceRange`   | Price slider                   | `{ min, max }` in SGD, inclusive; `null` means any price |
 | `dietary`      | Quick chips + filter sheet     | Item must have **all** selected tags |
 
 Other notes:
+
+- The stall dropdown follows the selected canteen. With all canteens selected, each stall label includes its canteen so repeated names remain distinguishable. Changing canteens clears the previous stall. Stall selection combines with every other filter and is included in the active-filter count.
 
 - Every `Canteen` needs `coordinates: { lat, lng }` for its map pin. The mock coordinates are approximate, so use the real ones from the dataset or check them on a map.
 - Pins and the list are built from whatever `filterMenuItems` returns. A canteen with no matching dishes stays on the map as a small grey pin.
@@ -89,3 +92,5 @@ npm run validate:menu
 ```
 
 CI checks tests, lint, type checking and builds. Release menu validation deliberately fails while the production CSV is empty. Actual menu content, dietary evidence and coordinates must be verified before publishing the app or using it for the user study.
+
+See [the responsive QA report](docs/device-qa.md) for the tested browser sizes, scenarios, fixes and remaining physical-device checks.

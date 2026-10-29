@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { FilterPanel, type FilterPanelProps } from './FilterPanel'
+import { trapDialogFocus } from '../lib/dialogFocus'
 
 export interface FilterSheetProps extends Omit<FilterPanelProps, 'hideHeader'> {
   open: boolean
@@ -10,16 +11,24 @@ export interface FilterSheetProps extends Omit<FilterPanelProps, 'hideHeader'> {
 /** All-filters dialog: bottom sheet on mobile, centred modal on desktop. */
 export function FilterSheet({ open, onClose, resultCount, ...panelProps }: FilterSheetProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!open) return
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null
     closeButtonRef.current?.focus()
 
     function handleKey(event: KeyboardEvent) {
-      if (event.key === 'Escape') onClose()
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        onClose()
+      } else if (dialogRef.current) trapDialogFocus(event, dialogRef.current)
     }
     window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
+    return () => {
+      window.removeEventListener('keydown', handleKey)
+      if (previousFocus?.isConnected) previousFocus.focus()
+    }
   }, [open, onClose])
 
   return (
@@ -33,6 +42,8 @@ export function FilterSheet({ open, onClose, resultCount, ...panelProps }: Filte
       />
       <div
         role="dialog"
+        ref={dialogRef}
+        tabIndex={-1}
         aria-modal="true"
         aria-labelledby="filter-sheet-title"
         inert={!open}
