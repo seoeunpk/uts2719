@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+@theme {
+  --color-nus-blue: #003d7c;
+  --color-nus-blue-dark: #002b58;
+  --color-nus-blue-soft: #e8eff8;
+  --color-nus-orange: #ef7c00;
+  --color-nus-orange-soft: #fff1e0;
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-stone-50 text-slate-900 antialiased;
+  }
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
