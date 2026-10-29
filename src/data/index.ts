@@ -5,7 +5,7 @@
  * TODO(Person 2): replace the mock imports below with the real NUS dataset,
  * keep the exported names and types, and set IS_MOCK_DATA to false.
  */
-import { ALL_DIETARY_TAGS, PRICE_RANGES } from '../lib/constants'
+import { ALL_DIETARY_TAGS } from '../lib/constants'
 import type { Canteen, FilterOptions, MenuItem } from '../types/menu'
 import { mockCanteens, mockMenuItems } from './mock/mockMenu'
 
@@ -19,5 +19,9 @@ export const filterOptions: FilterOptions = {
   canteens,
   cuisines: [...new Set(menuItems.map((item) => item.cuisine))].sort(),
   dietary: ALL_DIETARY_TAGS,
-  priceRanges: PRICE_RANGES,
+  // Whole dollars so the slider ends on round numbers.
+  priceBounds: {
+    min: Math.floor(Math.min(...menuItems.map((item) => item.price))),
+    max: Math.ceil(Math.max(...menuItems.map((item) => item.price))),
+  },
 }

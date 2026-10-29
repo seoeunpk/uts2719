@@ -45,7 +45,7 @@ How `MenuFilters` is defined (an empty value means no restriction):
 | `query`        | Search bar (every keystroke)   | Raw search text                          |
 | `canteenId`    | Filter dropdown                | One `Canteen.id`, or `null` for all      |
 | `cuisines`     | Quick chips + filter sheet     | Match **any** selected cuisine           |
-| `priceRangeId` | Quick chips + filter sheet     | Look up in `options.priceRanges`; bounds are inclusive, `max: null` means no cap |
+| `priceRange`   | Price slider                   | `{ min, max }` in SGD, inclusive; `null` means any price |
 | `dietary`      | Quick chips + filter sheet     | Suggested: item must have **all** selected tags |
 
 Other notes:
@@ -57,5 +57,5 @@ Other notes:
 - The map code (MapLibre) is about 335 KB gzipped, so it's lazy-loaded and the panel appears first. Vite's "chunk larger than 500 kB" warning is expected.
 - `MenuItem.imageUrl` is optional. When it's missing or the image fails to load, the card shows a plain placeholder.
 - `DietaryTag` is a union in `types/menu.ts`. If the dataset has more tags, add them there and in `DIETARY_LABELS`, and the compiler will flag anything else that needs updating.
-- Price buckets are defined in `PRICE_RANGES` in `lib/constants.ts`.
+- The price slider spans `filterOptions.priceBounds`, which is the cheapest to dearest dish rounded to whole dollars, in $0.50 steps.
 - `FoodCard` accepts an optional `onSelect` callback if a dish detail view is added later.

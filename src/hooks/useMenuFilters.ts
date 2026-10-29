@@ -19,7 +19,7 @@ export function useMenuFilters(initial: MenuFilters = EMPTY_FILTERS) {
     (filters.canteenId ? 1 : 0) +
     filters.cuisines.length +
     filters.dietary.length +
-    (filters.priceRangeId ? 1 : 0)
+    (filters.priceRange ? 1 : 0)
 
   return { filters, setFilters, updateFilters, resetFilters, activeFilterCount }
 }

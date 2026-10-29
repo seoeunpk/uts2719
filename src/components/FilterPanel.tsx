@@ -3,6 +3,7 @@ import { toggleInList } from '../hooks/useMenuFilters'
 import { DIETARY_LABELS } from '../lib/constants'
 import type { FilterOptions, MenuFilters } from '../types/menu'
 import { Chip } from './Chip'
+import { PriceSlider } from './PriceSlider'
 
 export interface FilterPanelProps {
   filters: MenuFilters
@@ -56,20 +57,11 @@ export function FilterPanel({ filters, options, onChange, onReset, hideHeader = 
       </FilterSection>
 
       <FilterSection title="Price">
-        <div className="flex flex-wrap gap-2">
-          {options.priceRanges.map((range) => {
-            const selected = filters.priceRangeId === range.id
-            return (
-              <Chip
-                key={range.id}
-                selected={selected}
-                onClick={() => onChange({ priceRangeId: selected ? null : range.id })}
-              >
-                {range.label}
-              </Chip>
-            )
-          })}
-        </div>
+        <PriceSlider
+          bounds={options.priceBounds}
+          value={filters.priceRange}
+          onChange={(priceRange) => onChange({ priceRange })}
+        />
       </FilterSection>
 
       <FilterSection title="Dietary">
