@@ -3,14 +3,11 @@
  * `./mock` directly.
  *
  * TODO(Person 2): replace the mock imports below with the real NUS dataset,
- * keep the exported names and types, and set IS_MOCK_DATA to false.
+ * keeping the exported names and types.
  */
 import { ALL_DIETARY_TAGS } from '../lib/constants'
 import type { Canteen, FilterOptions, MenuItem } from '../types/menu'
 import { mockCanteens, mockMenuItems } from './mock/mockMenu'
-
-/** Shows a "Preview data" badge in the UI while true. */
-export const IS_MOCK_DATA = true
 
 export const canteens: Canteen[] = mockCanteens
 export const menuItems: MenuItem[] = mockMenuItems

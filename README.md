@@ -35,7 +35,7 @@ src/
 
 The UI is already wired end to end. Two files need changing:
 
-1. **Real data: `src/data/index.ts`.** Replace the mock imports with the real dataset, mapped to `Canteen[]` and `MenuItem[]` from `src/types/menu.ts`. Then set `IS_MOCK_DATA = false`, which removes the "Preview data" badge. `filterOptions.cuisines` is built from the items automatically.
+1. **Real data: `src/data/index.ts`.** Replace the mock imports with the real dataset, mapped to `Canteen[]` and `MenuItem[]` from `src/types/menu.ts`. `filterOptions.cuisines` is built from the items automatically.
 2. **Search and filtering: `src/lib/filterMenu.ts`.** Implement `filterMenuItems(items, filters, options)`. It runs every time any filter changes, and the UI renders whatever it returns: the map pins, the result count, the list, and the empty state when it returns nothing.
 
 How `MenuFilters` is defined (an empty value means no restriction):

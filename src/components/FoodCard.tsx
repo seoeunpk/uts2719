@@ -45,14 +45,9 @@ export function FoodCard({ item, canteenName, highlighted = false, onSelect }: F
           {item.stallName}
           {canteenName && <span className="text-slate-400">, {canteenName}</span>}
         </p>
-        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-          <span className="text-xs font-medium text-slate-500">{item.cuisine}</span>
-          {item.dietary.map((tag) => (
-            <span key={tag} className="rounded-md bg-emerald-50 px-1.5 py-0.5 text-xs font-medium text-emerald-700">
-              {DIETARY_LABELS[tag]}
-            </span>
-          ))}
-        </div>
+        <p className="mt-1 text-xs font-medium text-slate-500">
+          {[item.cuisine, ...item.dietary.map((tag) => DIETARY_LABELS[tag])].join(', ')}
+        </p>
       </div>
     </>
   )

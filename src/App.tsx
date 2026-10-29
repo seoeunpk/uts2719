@@ -6,7 +6,7 @@ import type { MapPadding } from './components/map/MapView'
 import { QuickFilters } from './components/QuickFilters'
 import { ResultsList } from './components/ResultsList'
 import { SearchBar } from './components/SearchBar'
-import { IS_MOCK_DATA, canteens, filterOptions, menuItems } from './data'
+import { canteens, filterOptions, menuItems } from './data'
 import { useMenuFilters } from './hooks/useMenuFilters'
 import { useMediaQuery, useViewportHeight } from './hooks/useViewport'
 import { filterMenuItems } from './lib/filterMenu'
@@ -76,7 +76,6 @@ function App() {
       onSelectItem={selectItem}
       onHoverCanteen={isDesktop ? setHoveredCanteenId : undefined}
       onReset={resetFilters}
-      isPreviewData={IS_MOCK_DATA}
     />
   )
 
