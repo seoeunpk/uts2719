@@ -1,34 +1,32 @@
 import { useEffect, useRef } from 'react'
 import { FilterPanel, type FilterPanelProps } from './FilterPanel'
 
-export interface MobileFilterDrawerProps extends Omit<FilterPanelProps, 'hideHeader'> {
+export interface FilterSheetProps extends Omit<FilterPanelProps, 'hideHeader'> {
   open: boolean
   onClose: () => void
   resultCount: number
 }
 
-/** Bottom sheet wrapping `FilterPanel` for small screens. */
-export function MobileFilterDrawer({ open, onClose, resultCount, ...panelProps }: MobileFilterDrawerProps) {
+/** All-filters dialog: bottom sheet on mobile, centred modal on desktop. */
+export function FilterSheet({ open, onClose, resultCount, ...panelProps }: FilterSheetProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     if (!open) return
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
     closeButtonRef.current?.focus()
 
     function handleKey(event: KeyboardEvent) {
       if (event.key === 'Escape') onClose()
     }
     window.addEventListener('keydown', handleKey)
-    return () => {
-      document.body.style.overflow = previousOverflow
-      window.removeEventListener('keydown', handleKey)
-    }
+    return () => window.removeEventListener('keydown', handleKey)
   }, [open, onClose])
 
   return (
-    <div className={`fixed inset-0 z-50 lg:hidden ${open ? '' : 'pointer-events-none'}`} aria-hidden={!open}>
+    <div
+      className={`fixed inset-0 z-50 flex items-end lg:items-center lg:justify-center ${open ? '' : 'pointer-events-none'}`}
+      aria-hidden={!open}
+    >
       <div
         onClick={onClose}
         className={`absolute inset-0 bg-slate-900/40 transition-opacity duration-200 ${open ? 'opacity-100' : 'opacity-0'}`}
@@ -36,15 +34,15 @@ export function MobileFilterDrawer({ open, onClose, resultCount, ...panelProps }
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="filter-drawer-title"
+        aria-labelledby="filter-sheet-title"
         inert={!open}
-        className={`absolute inset-x-0 bottom-0 flex max-h-[85dvh] flex-col rounded-t-3xl bg-white shadow-2xl transition-transform duration-300 ease-out ${
-          open ? 'translate-y-0' : 'translate-y-full'
+        className={`relative flex max-h-[85dvh] w-full flex-col rounded-t-3xl bg-white shadow-2xl transition duration-300 ease-out lg:max-h-[80vh] lg:w-[440px] lg:rounded-3xl ${
+          open ? 'translate-y-0 lg:scale-100 lg:opacity-100' : 'translate-y-full lg:translate-y-0 lg:scale-95 lg:opacity-0'
         }`}
       >
-        <div className="mx-auto mt-3 h-1.5 w-10 rounded-full bg-slate-200" aria-hidden="true" />
-        <div className="flex items-center justify-between px-5 pb-2 pt-3">
-          <h2 id="filter-drawer-title" className="text-lg font-bold">
+        <div className="mx-auto mt-3 h-1.5 w-10 rounded-full bg-slate-200 lg:hidden" aria-hidden="true" />
+        <div className="flex items-center justify-between px-5 pb-2 pt-3 lg:pt-5">
+          <h2 id="filter-sheet-title" className="text-lg font-bold">
             Filters
           </h2>
           <button

@@ -6,12 +6,19 @@
  * compiler will point out every component that needs updating.
  */
 
+export interface LatLng {
+  lat: number
+  lng: number
+}
+
 /** A campus food location, e.g. a canteen or food court. */
 export interface Canteen {
   id: string
   name: string
   /** Short human-readable area, e.g. "Faculty of Science". */
   location: string
+  /** Where the map pin goes. */
+  coordinates: LatLng
   openingHours?: string
 }
 

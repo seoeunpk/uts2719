@@ -1,4 +1,4 @@
-import type { DietaryTag, MenuFilters, PriceRange } from '../types/menu'
+import type { DietaryTag, LatLng, MenuFilters, PriceRange } from '../types/menu'
 
 export const DIETARY_LABELS: Record<DietaryTag, string> = {
   halal: 'Halal',
@@ -41,3 +41,15 @@ export const CUISINE_EMOJI: Record<string, string> = {
 export function formatPrice(price: number): string {
   return `$${price.toFixed(2)}`
 }
+
+/** Map framing for the Kent Ridge campus (incl. UTown). */
+export const NUS_CENTER: LatLng = { lat: 1.2976, lng: 103.7764 }
+/**
+ * Generous so the map can shift pins clear of the side panel / bottom sheet.
+ * Must be taller than a phone screen at the minimum zoom, or Leaflet pins the
+ * view to the centre of these bounds.
+ */
+export const NUS_MAX_BOUNDS: [[number, number], [number, number]] = [
+  [1.248, 103.726],
+  [1.348, 103.826],
+]

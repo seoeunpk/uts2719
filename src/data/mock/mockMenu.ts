@@ -4,16 +4,19 @@
  * Dish names, stalls and prices below are made up so the frontend can be
  * designed before the real dataset is connected. They are NOT real NUS menu
  * information. Do not ship this file as a data source; see `src/data/index.ts`.
+ *
+ * Canteen coordinates are approximate and should be checked against the
+ * real dataset before launch.
  */
 import type { Canteen, MenuItem } from '../../types/menu'
 
 export const mockCanteens: Canteen[] = [
-  { id: 'the-deck', name: 'The Deck', location: 'Arts & Social Sciences', openingHours: '7:30am – 8pm' },
-  { id: 'frontier', name: 'Frontier', location: 'Faculty of Science', openingHours: '7:30am – 8pm' },
-  { id: 'techno-edge', name: 'Techno Edge', location: 'Engineering', openingHours: '7am – 8pm' },
-  { id: 'pgp', name: 'PGP Canteen', location: "Prince George's Park", openingHours: '7am – 9pm' },
-  { id: 'fine-food', name: 'Fine Food', location: 'University Town', openingHours: '8am – 9pm' },
-  { id: 'the-terrace', name: 'The Terrace', location: 'School of Computing', openingHours: '7:30am – 7pm' },
+  { id: 'the-deck', coordinates: { lat: 1.2944, lng: 103.7725 }, name: 'The Deck', location: 'Arts & Social Sciences', openingHours: '7:30am – 8pm' },
+  { id: 'frontier', coordinates: { lat: 1.2963, lng: 103.7804 }, name: 'Frontier', location: 'Faculty of Science', openingHours: '7:30am – 8pm' },
+  { id: 'techno-edge', coordinates: { lat: 1.298, lng: 103.7717 }, name: 'Techno Edge', location: 'Engineering', openingHours: '7am – 8pm' },
+  { id: 'pgp', coordinates: { lat: 1.2912, lng: 103.7808 }, name: 'PGP Canteen', location: "Prince George's Park", openingHours: '7am – 9pm' },
+  { id: 'fine-food', coordinates: { lat: 1.304, lng: 103.7737 }, name: 'Fine Food', location: 'University Town', openingHours: '8am – 9pm' },
+  { id: 'the-terrace', coordinates: { lat: 1.295, lng: 103.7742 }, name: 'The Terrace', location: 'School of Computing', openingHours: '7:30am – 7pm' },
 ]
 
 export const mockMenuItems: MenuItem[] = [
