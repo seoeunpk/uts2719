@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Shared data and local configuration
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+Thumbs.db

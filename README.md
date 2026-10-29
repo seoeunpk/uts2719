@@ -5,7 +5,7 @@ A responsive, map-first web app for browsing food across NUS campus canteens. Pi
 ## Run it
 
 ```bash
-npm install
+npm ci
 npm run dev      # http://localhost:5173
 npm run build    # type-check + production build into dist/
 npm run preview  # serve the production build locally
@@ -20,7 +20,7 @@ src/
   types/menu.ts          Shared data contracts (MenuItem, Canteen, MenuFilters, ...)
   data/index.ts          Single data entry point: the only file that should import data
   data/mock/mockMenu.ts  MOCK data for UI preview only (not real menus)
-  lib/filterMenu.ts      Search + filter function (currently a pass-through stub)
+  lib/filterMenu.ts      UI adapter for search + combined filters
   lib/constants.ts       Dietary labels, price ranges, empty filter state, map bounds
   lib/summarise.ts       Groups filtered results by canteen for pins and the list
   hooks/                 Filter UI state, media query / viewport helpers
@@ -33,10 +33,10 @@ src/
 
 ## Integration guide (Person 2)
 
-The UI is already wired end to end. Two files need changing:
+Search and filtering are connected to the existing UI. Real menu data is still pending:
 
 1. **Real data: `src/data/index.ts`.** Replace the mock imports with the real dataset, mapped to `Canteen[]` and `MenuItem[]` from `src/types/menu.ts`. Then set `IS_MOCK_DATA = false`, which removes the "Preview data" badge. `filterOptions.cuisines` is built from the items automatically.
-2. **Search and filtering: `src/lib/filterMenu.ts`.** Implement `filterMenuItems(items, filters, options)`. It runs every time any filter changes, and the UI renders whatever it returns: the map pins, the result count, the list, and the empty state when it returns nothing.
+2. **Search and filtering: `src/lib/filterMenu.ts`.** The adapter now calls the shared logic in `src/lib/menu.js`, translating the UI's canteen IDs, price presets and dietary selections. The map pins, result count, list and empty state all use its results. It preserves the existing item order and object references.
 
 How `MenuFilters` is defined (an empty value means no restriction):
 
@@ -59,3 +59,23 @@ Other notes:
 - `DietaryTag` is a union in `types/menu.ts`. If the dataset has more tags, add them there and in `DIETARY_LABELS`, and the compiler will flag anything else that needs updating.
 - Price buckets are defined in `PRICE_RANGES` in `lib/constants.ts`.
 - `FoodCard` accepts an optional `onSelect` callback if a dish detail view is added later.
+
+## Data utilities and checks
+
+Use Node.js 24 LTS; `.nvmrc` pins the checked version, 24.16.0.
+
+```sh
+npm test                  # CSV, core filtering, UI adapter and React lifecycle tests
+npm run lint              # shared frontend and data code
+npm run build             # type-check and build the actual app
+npm run test:build        # standalone React/data compatibility fixture
+npm run validate:menu     # validate the production CSV; fails while it is empty
+```
+
+Pull requests and updates to `main` run tests, lint and the app build in GitHub Actions.
+
+`src/lib/menu.js` provides CSV loading/validation, combined filters, sorting and filter options. `src/hooks/useMenu.js` provides a standalone CSV-loading hook. Both include TypeScript declarations. The existing map UI continues to use the clearly labelled mock data through `src/data/index.ts` until the actual CSVs are supplied and mapped to the shared UI types.
+
+`public/data/menu.csv` contains headings only. The fixture records in `tests/fixtures/` are fictional and must not be published as real menu data. Menu release validation is separate from CI because real records and source verification are still pending.
+
+See [the data handoff guide](docs/person-2-handoff.md) for the proposed CSV format. Menu photos, dietary evidence, coordinates, actual desktop/mobile acceptance and deployment still require checking before launch.
