@@ -53,8 +53,7 @@ Other notes:
 - Every `Canteen` needs `coordinates: { lat, lng }` for its map pin. The mock coordinates are approximate, so use the real ones from the dataset or check them on a map.
 - Pins and the list are built from whatever `filterMenuItems` returns. A canteen with no matching dishes stays on the map as a small grey pin.
 - Clicking a pin opens that canteen in the panel. This is UI state and separate from the `canteenId` filter.
-- The basemap is a custom flat, illustrated-map style (sage blocks, cream roads, decorative trees) drawn from OpenFreeMap's free, keyless vector tiles. It's defined in `components/map/campusStyle.ts`. Everything outside the NUS outline is blanked to cream, and panning and zooming are limited to campus (`NUS_MAX_BOUNDS`, `minZoom` in `MapView.tsx`).
-- Pins are lettered A, B, C... in canteen order (`summariseByCanteen`), matching the map legend.
+- The basemap is OpenFreeMap's free, keyless "Positron" vector style, with place names, road shields and boundaries removed (`HIDDEN_LAYER` in `CampusBasemap.tsx`). Everything outside the NUS outline is faded out, and panning and zooming are limited to campus (`NUS_MAX_BOUNDS`, `minZoom` in `MapView.tsx`).
 - The map code (MapLibre) is about 335 KB gzipped, so it's lazy-loaded and the panel appears first. Vite's "chunk larger than 500 kB" warning is expected.
 - `MenuItem.imageUrl` is optional. When it's missing or the image fails to load, the card shows a placeholder for the cuisine.
 - `DietaryTag` is a union in `types/menu.ts`. If the dataset has more tags, add them there and in `DIETARY_LABELS`, and the compiler will flag anything else that needs updating.

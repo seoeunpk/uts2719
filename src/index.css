@@ -26,22 +26,9 @@
 
 /* ---------- Map ---------- */
 
-/* Illustrated-map palette, scoped to the map. Mirrors MAP_COLORS in campusStyle.ts. */
-:root {
-  --map-cream: #f2eadc;
-  --map-sage: #a6bcbc;
-  --map-ink: #2c3d55;
-  --map-ochre: #d29a45;
-  --map-muted: #9aa6b2;
-}
-
 .leaflet-container {
   font-family: inherit;
-  background: var(--map-cream);
-}
-.leaflet-control-attribution {
-  background: rgb(242 234 220 / 0.85) !important;
-  font-size: 10px;
+  background: #eef1f4;
 }
 
 /* Keep Leaflet's controls clear of the bottom sheet / side panel. */
@@ -63,7 +50,7 @@
   color: #334155 !important;
 }
 
-/* Canteen pins (rendered through L.divIcon): lettered teardrops. */
+/* Canteen pins (rendered through L.divIcon). */
 .nff-pin-icon {
   background: none;
   border: 0;
@@ -77,121 +64,83 @@
 }
 .nff-pin__head {
   position: relative;
-  width: 32px;
-  height: 32px;
-  margin-bottom: 5px;
-  border-radius: 50% 50% 50% 0;
-  transform: rotate(-45deg);
-  transform-origin: 50% 50%;
-  background: var(--map-ink);
-  box-shadow: -1px 2px 4px rgb(30 43 62 / 0.3);
-  transition: transform 150ms ease, background-color 150ms ease;
-}
-.nff-pin__head span {
-  position: absolute;
-  inset: 0;
   display: grid;
   place-items: center;
-  transform: rotate(45deg);
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  border: 2.5px solid #fff;
+  background: var(--color-nus-blue);
   color: #fff;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.3);
+  margin-bottom: 7px;
+  transition: transform 150ms ease, background-color 150ms ease;
+  transform-origin: 50% 100%;
+}
+.nff-pin__head::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top: 7px solid #fff;
 }
 .nff-pin__label {
   position: absolute;
   left: calc(100% + 6px);
-  top: 3px;
+  top: 2px;
   display: flex;
   flex-direction: column;
   white-space: nowrap;
-  line-height: 1.3;
+  line-height: 1.2;
   pointer-events: none;
-  color: var(--map-ink);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
   text-shadow:
-    0 0 2px var(--map-sage),
-    0 0 3px var(--map-sage),
-    0 0 4px var(--map-sage);
+    0 0 2px #fff,
+    0 0 2px #fff,
+    0 0 3px #fff,
+    0 0 4px #fff;
 }
 .nff-pin__label strong {
-  font-size: 10.5px;
+  font-size: 13px;
   font-weight: 700;
+  color: #0f172a;
 }
 .nff-pin__label span {
-  font-size: 9px;
-  font-weight: 600;
-  opacity: 0.8;
+  font-size: 11px;
+  font-weight: 500;
+  color: #475569;
 }
 .nff-pin:hover .nff-pin__head,
 .nff-pin--highlighted .nff-pin__head {
-  transform: rotate(-45deg) scale(1.12);
+  transform: scale(1.15);
 }
 .nff-pin--selected .nff-pin__head {
-  background: var(--map-ochre);
-  transform: rotate(-45deg) scale(1.25);
-}
-.nff-pin--selected .nff-pin__head span {
-  color: var(--map-ink);
+  background: #e06c00;
+  transform: scale(1.3);
 }
 .nff-pin--selected .nff-pin__label {
-  left: calc(100% + 10px);
+  left: calc(100% + 12px);
 }
-/* Canteens without matches fade back, like inactive stops on a printed map. */
+.nff-pin--selected .nff-pin__label strong {
+  color: #b45309;
+}
 .nff-pin--empty .nff-pin__head {
-  background: var(--map-muted);
-  box-shadow: none;
-  transform: rotate(-45deg) scale(0.8);
+  width: 18px;
+  height: 18px;
+  background: #94a3b8;
+  margin-bottom: 4px;
+}
+.nff-pin--empty .nff-pin__head::after {
+  display: none;
 }
 .nff-pin--empty .nff-pin__label {
-  opacity: 0.6;
+  top: -2px;
+  opacity: 0.75;
 }
 .nff-compact .nff-pin--default .nff-pin__label span,
 .nff-compact .nff-pin--empty .nff-pin__label {
   display: none;
-}
-
-/* Map legend card. */
-.nff-legend {
-  background: rgb(242 234 220 / 0.95);
-  color: var(--map-ink);
-}
-.nff-legend__title {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-.nff-legend__name {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.nff-legend__sub {
-  font-size: 11px;
-  opacity: 0.75;
-}
-.nff-legend__pin {
-  position: relative;
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  margin: 2px 2px 4px;
-  border-radius: 50% 50% 50% 0;
-  transform: rotate(-45deg);
-  background: var(--map-ink);
-}
-.nff-legend__pin span {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  transform: rotate(45deg);
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-}
-.nff-legend__pin--muted {
-  background: var(--map-muted);
 }

@@ -6,7 +6,6 @@ import { NUS_CENTER, NUS_MAX_BOUNDS, formatPrice } from '../../lib/constants'
 import type { CanteenSummary } from '../../lib/summarise'
 import type { LatLng } from '../../types/menu'
 import { CampusBasemap } from './CampusBasemap'
-import { MapLegend } from './MapLegend'
 
 /** Pixels of map hidden behind floating UI, so pins are framed in the visible area. */
 export interface MapPadding {
@@ -24,15 +23,11 @@ export interface MapViewProps {
   onSelectCanteen: (canteenId: string) => void
   padding: MapPadding
   showZoomControl?: boolean
-  /** Shows the lettered map key (desktop). */
-  showLegend?: boolean
 }
 
 const SELECTED_ZOOM = 17
 const EDGE = 32
 const COMPACT_BELOW_ZOOM = 16
-/** Legend card width + gap; pins are framed to its right. */
-const LEGEND_SPACE = 272
 
 export function MapView({
   summaries,
@@ -41,14 +36,9 @@ export function MapView({
   onSelectCanteen,
   padding,
   showZoomControl = true,
-  showLegend = false,
 }: MapViewProps) {
   const [map, setMap] = useState<L.Map | null>(null)
   const selected = summaries.find((s) => s.canteen.id === selectedCanteenId)?.canteen
-  const framing = useMemo(
-    () => (showLegend ? { ...padding, left: padding.left + LEGEND_SPACE } : padding),
-    [padding, showLegend],
-  )
 
   useEffect(() => {
     if (!map) return
@@ -72,16 +62,16 @@ export function MapView({
   const reframe = useEffectEvent(() => {
     if (!map) return
     if (selected) {
-      map.flyTo(centerWithPadding(map, selected.coordinates, SELECTED_ZOOM, framing), SELECTED_ZOOM, { duration: 0.6 })
+      map.flyTo(centerWithPadding(map, selected.coordinates, SELECTED_ZOOM, padding), SELECTED_ZOOM, { duration: 0.6 })
     } else {
-      fitAll(map, summaries, framing)
+      fitAll(map, summaries, padding)
     }
   })
 
   // Re-frame only when the selection or the visible area changes.
   useEffect(() => {
     reframe()
-  }, [map, selected?.id, framing.top, framing.right, framing.bottom, framing.left])
+  }, [map, selected?.id, padding.top, padding.right, padding.bottom, padding.left])
 
   return (
     <div className="absolute inset-0 isolate">
@@ -89,8 +79,7 @@ export function MapView({
         ref={setMap}
         center={[NUS_CENTER.lat, NUS_CENTER.lng]}
         zoom={16}
-        minZoom={14}
-        zoomSnap={0.25}
+        minZoom={15}
         maxZoom={19}
         maxBounds={NUS_MAX_BOUNDS}
         maxBoundsViscosity={1}
@@ -119,7 +108,7 @@ export function MapView({
 
       <button
         type="button"
-        onClick={() => map && fitAll(map, summaries, framing)}
+        onClick={() => map && fitAll(map, summaries, padding)}
         aria-label="Show all canteens"
         title="Show all canteens"
         style={{ bottom: padding.bottom + (showZoomControl ? 104 : 16), right: padding.right + 12 }}
@@ -131,12 +120,6 @@ export function MapView({
           <path d="M12 2v3M12 19v3M2 12h3M19 12h3" strokeLinecap="round" />
         </svg>
       </button>
-
-      {showLegend && (
-        <div style={{ left: padding.left + 16, bottom: padding.bottom + 16 }} className="absolute z-[1000] transition-[left] duration-300">
-          <MapLegend summaries={summaries} onSelectCanteen={onSelectCanteen} />
-        </div>
-      )}
     </div>
   )
 }
@@ -150,7 +133,7 @@ interface CanteenMarkerProps {
 }
 
 function CanteenMarker({ summary, state, onSelect }: CanteenMarkerProps) {
-  const { canteen, letter, items, minPrice } = summary
+  const { canteen, items, minPrice } = summary
   const count = items.length
 
   const icon = useMemo(() => {
@@ -159,11 +142,11 @@ function CanteenMarker({ summary, state, onSelect }: CanteenMarkerProps) {
       className: 'nff-pin-icon',
       iconSize: [0, 0],
       html: `<div class="nff-pin nff-pin--${state}">
-          <div class="nff-pin__head"><span>${escapeHtml(letter)}</span></div>
+          <div class="nff-pin__head">${count === 0 ? '' : count}</div>
           <div class="nff-pin__label"><strong>${escapeHtml(canteen.name)}</strong><span>${sub}</span></div>
         </div>`,
     })
-  }, [canteen.name, letter, count, minPrice, state])
+  }, [canteen.name, count, minPrice, state])
 
   return (
     <Marker
@@ -189,7 +172,7 @@ function fitAll(map: L.Map, summaries: CanteenSummary[], p: MapPadding) {
   map.flyToBounds(bounds, {
     paddingTopLeft: [p.left + EDGE, p.top + EDGE],
     // Extra right padding leaves room for the labels beside each pin.
-    paddingBottomRight: [p.right + EDGE + 150, p.bottom + EDGE],
+    paddingBottomRight: [p.right + EDGE + 110, p.bottom + EDGE],
     maxZoom: SELECTED_ZOOM,
     duration: 0.6,
   })

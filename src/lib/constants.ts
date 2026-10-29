@@ -47,10 +47,10 @@ export const NUS_CENTER: LatLng = { lat: 1.2995, lng: 103.7773 }
 /**
  * How far the map can pan. The area outside campus is faded out, so this is
  * mostly slack that lets pins move clear of the side panel / bottom sheet.
- * It must be larger than a phone screen at the minimum zoom (14), or Leaflet
+ * It must be larger than the screen at the minimum zoom (15), or Leaflet
  * pins the view to the centre of these bounds.
  */
 export const NUS_MAX_BOUNDS: [[number, number], [number, number]] = [
-  [NUS_CENTER.lat - 0.04, NUS_CENTER.lng - 0.04],
-  [NUS_CENTER.lat + 0.04, NUS_CENTER.lng + 0.04],
+  [NUS_CENTER.lat - 0.021, NUS_CENTER.lng - 0.036],
+  [NUS_CENTER.lat + 0.021, NUS_CENTER.lng + 0.036],
 ]
