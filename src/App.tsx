@@ -111,6 +111,7 @@ function App() {
           onSelectCanteen={selectCanteen}
           padding={mapPadding}
           showZoomControl={isDesktop}
+          showLegend={isDesktop}
         />
       </Suspense>
 
