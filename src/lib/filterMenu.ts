@@ -1,5 +1,6 @@
 import type { FilterMenuItems } from '../types/menu'
 import { searchMenu } from './menu.js'
+import { getStallId } from './stalls.ts'
 
 /**
  * Applies the search query and filters to the menu.
@@ -11,9 +12,9 @@ import { searchMenu } from './menu.js'
 export const filterMenuItems: FilterMenuItems = (items, filters, options) => {
   const priceRange = filters.priceRange
 
-  const candidates = filters.canteenId
-    ? items.filter((item) => item.canteenId === filters.canteenId)
-    : items
+  const candidates = items.filter((item) =>
+    (!filters.canteenId || item.canteenId === filters.canteenId)
+    && (!filters.stallId || getStallId(item.canteenId, item.stallName) === filters.stallId))
   const canteenNames = new Map(options.canteens.map((canteen) => [canteen.id, canteen.name]))
   const matched = searchMenu(candidates.map((item) => ({
     id: item.id,

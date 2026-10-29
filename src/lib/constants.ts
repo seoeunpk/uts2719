@@ -12,6 +12,7 @@ export const ALL_DIETARY_TAGS = Object.keys(DIETARY_LABELS) as DietaryTag[]
 export const EMPTY_FILTERS: MenuFilters = {
   query: '',
   canteenId: null,
+  stallId: null,
   cuisines: [],
   dietary: [],
   priceRange: null,

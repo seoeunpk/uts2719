@@ -7,6 +7,7 @@ import { JSDOM } from 'jsdom'
 import { buildFilterOptions } from '../src/data/catalogue.ts'
 import { useMenuCatalogue } from '../src/hooks/useMenuCatalogue.ts'
 import { useMenuFilters } from '../src/hooks/useMenuFilters.ts'
+import { getStallId } from '../src/lib/stalls.ts'
 
 const csv = await readFile(new URL('./fixtures/example-menu.csv', import.meta.url), 'utf8')
 const locations = JSON.parse(await readFile(new URL('./fixtures/example-canteens.json', import.meta.url), 'utf8'))
@@ -105,12 +106,27 @@ test('interface catalogue lifecycle and recovery', async (suite) => {
       assert.equal(state.isPreview, false)
       await reset()
     })
+    await suite.test('changing canteens clears a stale stall and the active count includes stall selection', async () => {
+      await render({ ...config, source: 'preview' })
+      await act(async () => { filterState.updateFilters({ canteenId: 'north', stallId: getStallId('north', 'Rice') }) })
+      assert.equal(filterState.activeFilterCount, 2)
+      await act(async () => { filterState.updateFilters({ canteenId: 'south' }) })
+      assert.equal(filterState.filters.stallId, null)
+      assert.equal(filterState.activeFilterCount, 1)
+      await act(async () => { filterState.updateFilters({ stallId: getStallId('south', 'Rice') }) })
+      await act(async () => { filterState.updateFilters({ canteenId: 'south' }) })
+      assert.equal(filterState.filters.stallId, getStallId('south', 'Rice'))
+      await act(async () => { filterState.updateFilters({ canteenId: null }) })
+      assert.equal(filterState.filters.stallId, null)
+      await reset()
+    })
     await suite.test('filter-panel reset preserves search, while empty-results recovery clears everything', async () => {
       await render({ ...config, source: 'preview' })
-      await act(async () => { filterState.updateFilters({ query: 'missing', canteenId: 'north', priceRange: { min: 1, max: 3 } }) })
+      await act(async () => { filterState.updateFilters({ query: 'missing', canteenId: 'north', stallId: getStallId('north', 'Rice'), priceRange: { min: 1, max: 3 } }) })
       await act(async () => { filterState.resetFilters() })
       assert.equal(filterState.filters.query, 'missing')
       assert.equal(filterState.filters.priceRange, null)
+      assert.equal(filterState.filters.stallId, null)
       await act(async () => { filterState.clearAllFilters() })
       assert.equal(filterState.filters.query, '')
       assert.equal(filterState.activeFilterCount, 0)

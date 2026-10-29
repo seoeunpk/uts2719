@@ -42,6 +42,13 @@ export interface MenuItem {
   description?: string
 }
 
+/** A distinct stall within one canteen, derived from the loaded menu records. */
+export interface StallOption {
+  id: string
+  canteenId: string
+  name: string
+}
+
 /** Inclusive price range in SGD. */
 export interface PriceRange {
   min: number
@@ -55,6 +62,8 @@ export interface PriceRange {
 export interface MenuFilters {
   query: string
   canteenId: string | null
+  /** Identifies a stall within its canteen, including when names repeat. */
+  stallId: string | null
   cuisines: string[]
   dietary: DietaryTag[]
   /** Set by the price slider; `null` means any price. */
@@ -64,6 +73,7 @@ export interface MenuFilters {
 /** The choices the filter panel renders. Derived from the dataset. */
 export interface FilterOptions {
   canteens: Canteen[]
+  stalls: StallOption[]
   cuisines: string[]
   dietary: DietaryTag[]
   /** Slider limits, derived from the cheapest and dearest dish. */
