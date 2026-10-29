@@ -22,8 +22,7 @@ export function CanteenDetail({ summary, onBack, highlightedItemId }: CanteenDet
 
   return (
     <div className="pb-6">
-      <div className="relative h-28 overflow-hidden bg-gradient-to-br from-nus-blue to-nus-blue-dark">
-        <div aria-hidden="true" className="absolute -right-6 -top-10 size-40 rounded-full bg-nus-orange/30 blur-2xl" />
+      <div className="relative h-28 overflow-hidden bg-nus-blue">
         <span aria-hidden="true" className="absolute bottom-3 right-4 text-5xl font-black text-white/15">
           {canteen.name}
         </span>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CUISINE_EMOJI, DIETARY_LABELS, formatPrice } from '../lib/constants'
+import { DIETARY_LABELS, formatPrice } from '../lib/constants'
 import type { MenuItem } from '../types/menu'
 
 export interface FoodCardProps {
@@ -18,7 +18,7 @@ export function FoodCard({ item, canteenName, highlighted = false, onSelect }: F
 
   const body = (
     <>
-      <div className="relative size-18 shrink-0 overflow-hidden rounded-xl bg-gradient-to-br from-nus-orange-soft to-nus-blue-soft">
+      <div className="relative size-18 shrink-0 overflow-hidden rounded-xl bg-slate-100">
         {showImage ? (
           <img
             src={item.imageUrl}
@@ -28,8 +28,10 @@ export function FoodCard({ item, canteenName, highlighted = false, onSelect }: F
             className="size-full object-cover"
           />
         ) : (
-          <span className="grid size-full place-items-center text-3xl" aria-hidden="true">
-            {CUISINE_EMOJI[item.cuisine] ?? '🍽️'}
+          <span className="grid size-full place-items-center text-slate-400" aria-hidden="true">
+            <svg viewBox="0 0 24 24" className="size-7" fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-1.7 1-3 3.2-3 6v4h3v8" />
+            </svg>
           </span>
         )}
       </div>

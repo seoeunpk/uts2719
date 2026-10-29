@@ -55,7 +55,7 @@ Other notes:
 - Clicking a pin opens that canteen in the panel. This is UI state and separate from the `canteenId` filter.
 - The basemap is OpenFreeMap's free, keyless "Positron" vector style, with place names, road shields and boundaries removed (`HIDDEN_LAYER` in `CampusBasemap.tsx`). Everything outside the NUS outline is faded out, and panning and zooming are limited to campus (`NUS_MAX_BOUNDS`, `minZoom` in `MapView.tsx`).
 - The map code (MapLibre) is about 335 KB gzipped, so it's lazy-loaded and the panel appears first. Vite's "chunk larger than 500 kB" warning is expected.
-- `MenuItem.imageUrl` is optional. When it's missing or the image fails to load, the card shows a placeholder for the cuisine.
+- `MenuItem.imageUrl` is optional. When it's missing or the image fails to load, the card shows a plain placeholder.
 - `DietaryTag` is a union in `types/menu.ts`. If the dataset has more tags, add them there and in `DIETARY_LABELS`, and the compiler will flag anything else that needs updating.
 - Price buckets are defined in `PRICE_RANGES` in `lib/constants.ts`.
 - `FoodCard` accepts an optional `onSelect` callback if a dish detail view is added later.

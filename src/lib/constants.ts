@@ -24,20 +24,6 @@ export const EMPTY_FILTERS: MenuFilters = {
   priceRangeId: null,
 }
 
-/** Emoji used on the image placeholder when a dish has no photo. */
-export const CUISINE_EMOJI: Record<string, string> = {
-  Chinese: '🍜',
-  Malay: '🍛',
-  Indian: '🫓',
-  Western: '🍝',
-  Japanese: '🍱',
-  Korean: '🍲',
-  Thai: '🌶️',
-  Vegetarian: '🥗',
-  Drinks: '🧋',
-  Desserts: '🍧',
-}
-
 export function formatPrice(price: number): string {
   return `$${price.toFixed(2)}`
 }

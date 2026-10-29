@@ -1,5 +1,5 @@
 /**
- * ⚠️ MOCK DATA FOR UI PREVIEW ONLY ⚠️
+ * MOCK DATA FOR UI PREVIEW ONLY
  *
  * Dish names, stalls and prices below are made up so the frontend can be
  * designed before the real dataset is connected. They are NOT real NUS menu
