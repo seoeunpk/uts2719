@@ -1,0 +1,7 @@
+id,name,price,canteen,stall,cuisine,dietary_tags,image,source
+example-001,Example Chicken Rice,3.50,Example North,Example Rice,Chinese,,,Fictional test fixture
+example-002,"Example Tofu, Greens",4.00,Example North,Example Greens,Chinese,vegetarian|vegan,,Fictional test fixture
+example-003,Example Curry,5.50,Example South,Example Curry,Indian,vegetarian|halal,,Fictional test fixture
+example-004,Example Noodles,,Example South,Example Rice,Chinese,,,Fictional test fixture
+example-005,Example Free Sample,0,Example North,Example Drinks,Drinks,,,Fictional test fixture
+example-006,Example Café Tea,2.00,Example South,Example Drinks,Drinks,vegetarian|vegan,,Fictional test fixture
