@@ -46,17 +46,10 @@ export function CampusBasemap() {
   }, [map])
 
   return (
-    <>
-      <Polygon
-        positions={[MASK_OUTER, ...NUS_CAMPUS_RINGS]}
-        interactive={false}
-        pathOptions={{ stroke: false, fillColor: '#f1f5f9', fillOpacity: 0.82 }}
-      />
-      <Polygon
-        positions={NUS_CAMPUS_RINGS}
-        interactive={false}
-        pathOptions={{ color: '#003d7c', weight: 1.5, opacity: 0.35, fill: false }}
-      />
-    </>
+    <Polygon
+      positions={[MASK_OUTER, ...NUS_CAMPUS_RINGS]}
+      interactive={false}
+      pathOptions={{ stroke: false, fillColor: '#f1f5f9', fillOpacity: 0.82 }}
+    />
   )
 }
