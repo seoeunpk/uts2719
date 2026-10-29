@@ -74,7 +74,7 @@ export function ResultsList({
                   <span className="block font-bold text-slate-900">{canteen.name}</span>
                   <span className="block truncate text-sm text-slate-500">
                     {canteen.location}
-                    {minPrice !== null && ` · from ${formatPrice(minPrice)}`}
+                    {minPrice !== null && `, from ${formatPrice(minPrice)}`}
                   </span>
                 </span>
                 <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5 text-slate-400" fill="none" stroke="currentColor" strokeWidth={2}>

@@ -43,7 +43,7 @@ export function FoodCard({ item, canteenName, highlighted = false, onSelect }: F
         </div>
         <p className="mt-0.5 truncate text-sm text-slate-600">
           {item.stallName}
-          {canteenName && <span className="text-slate-400"> · {canteenName}</span>}
+          {canteenName && <span className="text-slate-400">, {canteenName}</span>}
         </p>
         <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
           <span className="text-xs font-medium text-slate-500">{item.cuisine}</span>

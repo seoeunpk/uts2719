@@ -53,7 +53,7 @@ export function CanteenDetail({ summary, onBack, highlightedItemId }: CanteenDet
             <dt className="sr-only">Matching dishes</dt>
             <dd className="text-slate-600">
               {items.length} {items.length === 1 ? 'dish' : 'dishes'}
-              {minPrice !== null && ` · from ${formatPrice(minPrice)}`}
+              {minPrice !== null && `, from ${formatPrice(minPrice)}`}
             </dd>
           </div>
         </dl>
