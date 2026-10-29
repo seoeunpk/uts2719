@@ -63,7 +63,8 @@
 
 .leaflet-container {
   font-family: inherit;
-  background: #eef1f4;
+  /* Same grey as the outside-campus cover, so any not-yet-drawn edge blends in. */
+  background: #d7d7d7;
 }
 
 /* Keep Leaflet's controls clear of the bottom sheet / side panel. */
