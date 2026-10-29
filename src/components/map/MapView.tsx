@@ -137,7 +137,7 @@ function CanteenMarker({ summary, state, onSelect }: CanteenMarkerProps) {
   const count = items.length
 
   const icon = useMemo(() => {
-    const sub = count === 0 ? 'No matches' : `${count} ${count === 1 ? 'dish' : 'dishes'} · from ${formatPrice(minPrice ?? 0)}`
+    const sub = count === 0 ? 'No matches' : `${count} ${count === 1 ? 'dish' : 'dishes'}${minPrice === null ? '' : `, from ${formatPrice(minPrice)}`}`
     return L.divIcon({
       className: 'nff-pin-icon',
       iconSize: [0, 0],

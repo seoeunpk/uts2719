@@ -4,13 +4,12 @@ import { searchMenu } from './menu.js'
 /**
  * Applies the search query and filters to the menu.
  *
- * Translate the UI's canteen IDs and price presets into the shared data
+ * Translate the UI's canteen IDs and price slider into the shared data
  * filter contract. Keep the original item objects and order for cards,
  * canteen summaries and map navigation.
  */
 export const filterMenuItems: FilterMenuItems = (items, filters, options) => {
-  const priceRange = options.priceRanges.find((range) => range.id === filters.priceRangeId)
-  if (filters.priceRangeId && !priceRange) return []
+  const priceRange = filters.priceRange
 
   const candidates = filters.canteenId
     ? items.filter((item) => item.canteenId === filters.canteenId)

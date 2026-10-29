@@ -24,6 +24,7 @@ dist-ssr
 *.sw?
 
 # Shared data and local configuration
+# Shared data and local configuration
 node_modules/
 dist/
 coverage/

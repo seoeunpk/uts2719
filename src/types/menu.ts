@@ -29,26 +29,23 @@ export type DietaryTag = 'halal' | 'vegetarian' | 'vegan' | 'no-pork-no-lard'
 export interface MenuItem {
   id: string
   name: string
-  /** Price in SGD, e.g. 4.5 */
-  price: number
+  /** Price in SGD; null means the source does not provide a price. */
+  price: number | null
   stallName: string
   /** Must match a `Canteen.id`. */
   canteenId: string
   /** Free-form so the real dataset can define its own cuisines. */
-  cuisine: string
+  cuisine: string | null
   dietary: DietaryTag[]
   /** Optional; cards fall back to a placeholder when missing or broken. */
   imageUrl?: string
   description?: string
 }
 
-/** A preset price bucket shown in the filter panel. Bounds are inclusive. */
+/** Inclusive price range in SGD. */
 export interface PriceRange {
-  id: string
-  label: string
   min: number
-  /** `null` means no upper bound. */
-  max: number | null
+  max: number
 }
 
 /**
@@ -60,7 +57,8 @@ export interface MenuFilters {
   canteenId: string | null
   cuisines: string[]
   dietary: DietaryTag[]
-  priceRangeId: string | null
+  /** Set by the price slider; `null` means any price. */
+  priceRange: PriceRange | null
 }
 
 /** The choices the filter panel renders. Derived from the dataset. */
@@ -68,7 +66,8 @@ export interface FilterOptions {
   canteens: Canteen[]
   cuisines: string[]
   dietary: DietaryTag[]
-  priceRanges: PriceRange[]
+  /** Slider limits, derived from the cheapest and dearest dish. */
+  priceBounds: PriceRange
 }
 
 /** Signature for the search + filter implementation (Person 2). */

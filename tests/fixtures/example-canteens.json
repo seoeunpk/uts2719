@@ -1,0 +1,4 @@
+[
+  {"id":"north","name":"Example North","location":"Fictional test location","coordinates":{"lat":1.3,"lng":103.77}},
+  {"id":"south","name":"Example South","location":"Fictional test location","coordinates":{"lat":1.29,"lng":103.78}}
+]
