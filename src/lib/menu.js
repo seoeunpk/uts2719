@@ -1,6 +1,6 @@
 import Papa from "papaparse";
 
-export const DIETARY_TAGS = Object.freeze(["vegetarian", "vegan", "halal"]);
+export const DIETARY_TAGS = Object.freeze(["vegetarian", "vegan", "halal", "no-pork-no-lard"]);
 const REQUIRED_COLUMNS = ["id", "name", "price", "canteen", "stall"];
 const SORTS = ["name-asc", "name-desc", "price-asc", "price-desc"];
 const collator = new Intl.Collator("en", { sensitivity: "base", numeric: true });

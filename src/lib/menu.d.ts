@@ -1,4 +1,4 @@
-export type DietaryTag = "vegetarian" | "vegan" | "halal";
+export type DietaryTag = "vegetarian" | "vegan" | "halal" | "no-pork-no-lard";
 export interface MenuItem {
   id: string;
   name: string;

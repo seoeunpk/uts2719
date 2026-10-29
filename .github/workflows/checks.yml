@@ -32,5 +32,9 @@ jobs:
         run: npm ci
       - name: Test data and React hook
         run: npm test
+      - name: Lint frontend and data modules
+        run: npm run lint
+      - name: Build application and check types
+        run: npm run build
       - name: Check Vite integration build
         run: npm run test:build

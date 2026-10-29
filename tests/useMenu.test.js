@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import React, { act, StrictMode } from "react";
+import React, { act, StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { JSDOM } from "jsdom";
 import { useMenu } from "../src/hooks/useMenu.js";
@@ -18,8 +18,9 @@ test("React data hook lifecycle", async (suite) => {
   globalThis.IS_REACT_ACT_ENVIRONMENT = true;
   let state;
   function Consumer({ urls = "/menu.csv", filters }) {
-    state = useMenu(urls, filters);
-    return React.createElement("span", null, String(state.matchCount));
+    const menu = useMenu(urls, filters);
+    useEffect(() => { state = menu; }, [menu]);
+    return React.createElement("span", null, String(menu.matchCount));
   }
   let root;
   const render = async (props = {}, strict = false) => {

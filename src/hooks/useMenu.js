@@ -12,7 +12,6 @@ export function useMenu(urls, filters = EMPTY_FILTERS) {
   useEffect(() => {
     const controller = new AbortController();
     let active = true;
-    setState({ sourceKey, items: EMPTY_ITEMS, loading: true, error: null });
     loadMenuCsv(JSON.parse(sourceKey), { signal: controller.signal }).then(
       (items) => { if (active) setState({ sourceKey, items, loading: false, error: null }); },
       (error) => { if (active) setState({ sourceKey, items: EMPTY_ITEMS, loading: false, error }); },

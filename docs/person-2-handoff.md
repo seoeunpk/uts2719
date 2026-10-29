@@ -2,6 +2,8 @@
 
 Target: a working app by **Sunday, 1 November 2026**. The user confirmed that Person 1 uses React + Vite and will provide the menu data later as CSV files.
 
+The map interface and data utilities are now combined. `src/lib/filterMenu.ts` adapts the UI's existing controls to the shared search/filter logic, including its price presets, canteen IDs and four dietary tags. Result counts, menu lists and map summaries use the filtered records. The app still shows labelled preview data until the real CSVs are supplied.
+
 ## Included
 
 - Read one or multiple UTF-8 CSVs, including quoted commas, line breaks, double quotes and Excel's UTF-8 byte-order mark.
@@ -24,7 +26,7 @@ One row represents one purchasable dish or explicitly priced variant. Use a sepa
 | `canteen` | Yes | Verified canteen name |
 | `stall` | Yes | Verified stall name |
 | `cuisine` | No | Recorded category, or blank |
-| `dietary_tags` | No | Verified `vegetarian`, `vegan`, `halal`, separated with `|`; otherwise blank |
+| `dietary_tags` | No | Verified `vegetarian`, `vegan`, `halal`, `no-pork-no-lard`, separated with `|`; otherwise blank |
 | `image` | No | Image URL or site-relative path; otherwise blank |
 | `source` | No | Source photograph/file/reference; otherwise blank |
 
@@ -36,9 +38,9 @@ Dietary tags are explicit verified attributes. Blank means no verified tag is re
 
 Use consistent canteen, stall and cuisine spellings. IDs are case-sensitive. If stalls share a name across canteens, combine canteen and stall filters. Files in `public/` will be public when deployed.
 
-## Connect Person 1's interface
+## CSV-loading hook for the real-data import
 
-Merge `src/lib/`, `src/hooks/` and `public/data/`, keeping their directory relationship. Declaration files support TypeScript consumers. Merge package dependencies and check scripts into the existing project without replacing the frontend configuration.
+The current app uses the existing data entry point and UI filter adapter. The standalone CSV-loading hook below is available when replacing preview data. Declaration files support TypeScript consumers. Map parsed CSV records to `src/types/menu.ts` and verified canteen coordinates before switching the app's data source; the CSV and UI contracts use different field names.
 
 In an existing component, connect its control values to the hook:
 
@@ -89,7 +91,7 @@ Sort values: `name-asc` (default), `name-desc`, `price-asc`, `price-desc`. Unkno
 
 1. Receive the real CSVs, map their columns and review ambiguous/missing values against the menu sources.
 2. Validate all intended files together. Compare source/output counts, duplicate IDs and dietary evidence.
-3. Connect Person 1's controls, cards and navigation. Merge package scripts/dependencies without overwriting their frontend work.
+3. Replace the preview data through `src/data/index.ts`, mapping CSV fields to the UI contract, checking canteen IDs/coordinates and handling unknown prices before removing the preview badge.
 4. Test the actual interface on mobile and desktop: reset filters, changing canteens, repeated stall names, unknown prices, no results, failed loading and images.
 5. Use Person 1's Vite production build, configure the agreed hosting account/base path, deploy and verify the public URL. The base-aware CSV URL supports a repository subpath.
 

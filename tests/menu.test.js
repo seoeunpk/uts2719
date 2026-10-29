@@ -13,7 +13,7 @@ const validCsv = `${minimalHeader}\n001,Example Dish,3.50,Example Canteen,Exampl
 const response = (text) => ({ ok: true, text: async () => text });
 
 test("CSV preserves quoted commas, escaped quotes, multiline text and Unicode", () => {
-  const parsed = parseMenuCsv(`${minimalHeader}\r\n001,"Example \"\"Café\"\",\n米饭",3.50,Example Canteen,Example Stall\r\n`);
+  const parsed = parseMenuCsv(`${minimalHeader}\r\n001,"Example ""Café"",\n米饭",3.50,Example Canteen,Example Stall\r\n`);
   assert.equal(parsed[0].name, 'Example "Café",\n米饭');
   assert.equal(parsed[0].id, "001");
   assert.equal(parsed[0].price, 3.5);
@@ -38,7 +38,7 @@ test("a header-only file is empty while missing or duplicate headers fail", () =
 });
 
 test("malformed quotes and uneven row widths fail without silently losing data", () => {
-  for (const invalid of [`${minimalHeader}\n001,\"unfinished,3.50,Example Canteen,Example Stall`, `${validCsv},extra`, `${minimalHeader}\n001,Example Dish,3.50,Example Canteen`]) {
+  for (const invalid of [`${minimalHeader}\n001,"unfinished,3.50,Example Canteen,Example Stall`, `${validCsv},extra`, `${minimalHeader}\n001,Example Dish,3.50,Example Canteen`]) {
     assert.throws(() => parseMenuCsv(invalid), MenuDataError);
   }
 });
