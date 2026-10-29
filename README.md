@@ -1,6 +1,6 @@
 # NUS Food Finder
 
-A responsive, map-first web app for browsing food across NUS campus canteens. Pins on a campus map show where matching dishes are; a side panel (desktop) or draggable bottom sheet (mobile) lists the menus. Built with React, TypeScript, Vite, Tailwind CSS v4 and Leaflet, with no backend.
+A responsive, map-first web app for browsing food across NUS campus canteens. Pins on a campus map show where matching dishes are; a side panel (desktop) or draggable bottom sheet (mobile) lists the menus. Built with React, TypeScript, Vite, Tailwind CSS v4 and Leaflet (with a MapLibre vector basemap), with no backend.
 
 ## Run it
 
@@ -24,7 +24,8 @@ src/
   lib/constants.ts       Dietary labels, price ranges, empty filter state, map bounds
   lib/summarise.ts       Groups filtered results by canteen for pins and the list
   hooks/                 Filter UI state, media query / viewport helpers
-  components/map/        Leaflet map with canteen pins
+  data/nusCampus.ts      NUS campus outlines (from OpenStreetMap) for the NUS-only map
+  components/map/        Leaflet map, canteen pins, minimal campus basemap
   components/            Panel views (ResultsList, CanteenDetail), FoodCard, SearchBar,
                          QuickFilters chip row, FilterSheet, BottomSheet
   App.tsx                Layout and wiring (desktop side panel vs mobile bottom sheet)
@@ -52,7 +53,8 @@ Other notes:
 - Every `Canteen` needs `coordinates: { lat, lng }` for its map pin. The mock coordinates are approximate, so use the real ones from the dataset or check them on a map.
 - Pins and the list are built from whatever `filterMenuItems` returns. A canteen with no matching dishes stays on the map as a small grey pin.
 - Clicking a pin opens that canteen in the panel. This is UI state and separate from the `canteenId` filter.
-- The map uses free OpenStreetMap tiles with no API key, which is fine for a student project. For heavy traffic, switch the `TileLayer` URL in `MapView.tsx` to a keyed provider.
+- The basemap is OpenFreeMap's free, keyless "Positron" vector style, with place names, road shields and boundaries removed (`HIDDEN_LAYER` in `CampusBasemap.tsx`). Everything outside the NUS outline is faded out, and panning and zooming are limited to campus (`NUS_MAX_BOUNDS`, `minZoom` in `MapView.tsx`).
+- The map code (MapLibre) is about 335 KB gzipped, so it's lazy-loaded and the panel appears first. Vite's "chunk larger than 500 kB" warning is expected.
 - `MenuItem.imageUrl` is optional. When it's missing or the image fails to load, the card shows a placeholder for the cuisine.
 - `DietaryTag` is a union in `types/menu.ts`. If the dataset has more tags, add them there and in `DIETARY_LABELS`, and the compiler will flag anything else that needs updating.
 - Price buckets are defined in `PRICE_RANGES` in `lib/constants.ts`.

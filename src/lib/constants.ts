@@ -43,13 +43,14 @@ export function formatPrice(price: number): string {
 }
 
 /** Map framing for the Kent Ridge campus (incl. UTown). */
-export const NUS_CENTER: LatLng = { lat: 1.2976, lng: 103.7764 }
+export const NUS_CENTER: LatLng = { lat: 1.2995, lng: 103.7773 }
 /**
- * Generous so the map can shift pins clear of the side panel / bottom sheet.
- * Must be taller than a phone screen at the minimum zoom, or Leaflet pins the
- * view to the centre of these bounds.
+ * How far the map can pan. The area outside campus is faded out, so this is
+ * mostly slack that lets pins move clear of the side panel / bottom sheet.
+ * It must be larger than the screen at the minimum zoom (15), or Leaflet
+ * pins the view to the centre of these bounds.
  */
 export const NUS_MAX_BOUNDS: [[number, number], [number, number]] = [
-  [1.248, 103.726],
-  [1.348, 103.826],
+  [NUS_CENTER.lat - 0.021, NUS_CENTER.lng - 0.036],
+  [NUS_CENTER.lat + 0.021, NUS_CENTER.lng + 0.036],
 ]
