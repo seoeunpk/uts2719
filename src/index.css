@@ -30,10 +30,6 @@
   font-family: inherit;
   background: #eef1f4;
 }
-/* Calmer basemap so the pins stand out. */
-.leaflet-tile-pane {
-  filter: saturate(0.55) brightness(1.04) contrast(0.95);
-}
 
 /* Keep Leaflet's controls clear of the bottom sheet / side panel. */
 .leaflet-bottom {

@@ -1,8 +1,8 @@
-import { useCallback, useMemo, useState } from 'react'
+import { Suspense, lazy, useCallback, useMemo, useState } from 'react'
 import { BottomSheet } from './components/BottomSheet'
 import { CanteenDetail } from './components/CanteenDetail'
 import { FilterSheet } from './components/FilterSheet'
-import { MapView, type MapPadding } from './components/map/MapView'
+import type { MapPadding } from './components/map/MapView'
 import { QuickFilters } from './components/QuickFilters'
 import { ResultsList } from './components/ResultsList'
 import { SearchBar } from './components/SearchBar'
@@ -13,6 +13,9 @@ import { filterMenuItems } from './lib/filterMenu'
 import { getSheetHeights, type SheetSnap } from './lib/sheet'
 import { summariseByCanteen } from './lib/summarise'
 import type { MenuItem } from './types/menu'
+
+// The map engine is large; load it separately so the panel appears first.
+const MapView = lazy(() => import('./components/map/MapView').then((m) => ({ default: m.MapView })))
 
 const PANEL_WIDTH = 408
 /** Height of the floating search + chip rows on mobile. */
@@ -100,14 +103,16 @@ function App() {
 
   return (
     <div className="relative h-dvh overflow-hidden bg-slate-100">
-      <MapView
-        summaries={summaries}
-        selectedCanteenId={selectedCanteenId}
-        highlightedCanteenId={hoveredCanteenId}
-        onSelectCanteen={selectCanteen}
-        padding={mapPadding}
-        showZoomControl={isDesktop}
-      />
+      <Suspense fallback={null}>
+        <MapView
+          summaries={summaries}
+          selectedCanteenId={selectedCanteenId}
+          highlightedCanteenId={hoveredCanteenId}
+          onSelectCanteen={selectCanteen}
+          padding={mapPadding}
+          showZoomControl={isDesktop}
+        />
+      </Suspense>
 
       {isDesktop ? (
         <>

@@ -1,10 +1,11 @@
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { useEffect, useEffectEvent, useMemo, useState } from 'react'
-import { MapContainer, Marker, TileLayer, ZoomControl } from 'react-leaflet'
+import { MapContainer, Marker, ZoomControl } from 'react-leaflet'
 import { NUS_CENTER, NUS_MAX_BOUNDS, formatPrice } from '../../lib/constants'
 import type { CanteenSummary } from '../../lib/summarise'
 import type { LatLng } from '../../types/menu'
+import { CampusBasemap } from './CampusBasemap'
 
 /** Pixels of map hidden behind floating UI, so pins are framed in the visible area. */
 export interface MapPadding {
@@ -78,18 +79,14 @@ export function MapView({
         ref={setMap}
         center={[NUS_CENTER.lat, NUS_CENTER.lng]}
         zoom={16}
-        minZoom={14}
+        minZoom={15}
         maxZoom={19}
         maxBounds={NUS_MAX_BOUNDS}
-        maxBoundsViscosity={0.8}
+        maxBoundsViscosity={1}
         zoomControl={false}
         className="size-full"
       >
-        <TileLayer
-          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-          maxZoom={19}
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
+        <CampusBasemap />
         {showZoomControl && <ZoomControl position="bottomright" />}
         {summaries.map((summary) => (
           <CanteenMarker
